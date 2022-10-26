@@ -1,75 +1,236 @@
-## Abstract
+<div id="top"></div>
 
-Bridge is an open source technology designed to issue and manage digital assets on the blockchain, i.e. security tokens (tokens that represent ownership of an underlying asset). Unlike utility tokens for which transfer is most of the time unrestricted, security tokens are subject to transferability restrictions based on many factors (identity, asset class, local rules, transfer history, etc.) coming from financial regulations.
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Build pass](https://github.com/real-token/realt-walletless-contract/actions/workflows/node.js.yml/badge.svg)](https://github.com/real-token/realt-walletless-contract/actions/workflows/node.js.yml)
+[![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-Most of security token middlewares use a token-based approach to enforce such transfer restriction rules. This concept is a good step towards regulation, but lacks cross-token capabilities to apply rules that are computed accross multiple tokens (global transfer thresholds, for example). 
+<!-- PROJECT LOGO -->
+<br />
+<div align="center" id="about-the-project">
+  <a href="https://github.com/real-token/realt-walletless-contract">
+    <img src="images/logo.svg" alt="Logo" width="80" height="80">
+  </a>
 
-The purpose of Bridge is to provide a solution to this problem by being a cross-token compliance layer that will restrict the transferability of an ERC20 compliant token based on a set of rules. Those rules are managed by the issuer. who can set new rules whenever needed.
+<h3 align="center">Realt Walletless Contract</h3>
 
-Moreover, for regulatory compliance, Bridge provides features that would allow authorities to transfer tokens from one address to another in case of exceptional events (loss of keys, legal constraints, locked assets, etc.).
+  <p align="center">
+    Handling customer custody through a set of functions
+    <br />
+    <a href="https://realt.co/"><strong>Realt.co</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/real-token/realt-walletless-contract/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/real-token/realt-walletless-contract/issues">Request Feature</a>
+    ·
+    <a href="https://github.com/real-token/realt-walletless-api">API</a>
+  </p>
+</div>
 
+
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#built-with-hardhat">Built With Hardhat</a></li>
+  </ol>
+</details>
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+
+### Prerequisites
+
+
+* npm
+  ```sh
+  npm install npm@latest -g
+  ```
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/real-token/realt-walletless-contract.git
+   ```
+2. Install NPM packages
+   ```sh
+   npm install
+   ```
+3. Setup a `.env` file, with the following config
+
+   >  CoinMarketCap API Key [here](https://coinmarketcap.com/api/pricing/)
+
+   >  Infura API Key [here](https://infura.io/pricing)
+
+   >  Etherscan API Key [here](https://etherscan.io/apis)
+
+   > Check [.env.example](.env.example)
+
+4. Check available command
+
+   ```
+   npx hardhat --help
+   ```
+
+   >  Hardhat Getting Started [here](https://hardhat.org/getting-started#running-tasks)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+
+<!-- USAGE EXAMPLES -->
+## Usage
+
+### > Local TEST
+```
+  npm run node
+```
+****
+**In another terminal:**
+
+```
+npm run local
+```
+****
+**Now read [the readme of the API](https://github.com/real-token/realt-walletless-api)**
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+<!-- AUDIT -->
 ## Audit
 
-Contracts have been thoroughly audited by Chain Security: [Read the final report](https://www.mtpelerin.com/docs/bridge-protocol-v2-chainsecurity-audit-report.pdf)
+Auditing the solidity code in an important aspect of this language, we need to be confident with the code we ship to the customer to avoid malicious attacks
 
-## Overall overview
+A lot of the auditing have been done during the contract construction using the `Solidity static analysis framework` [**Slither**](https://github.com/crytic/slither)
 
-![Overall overview](docs/assets/overview.png "Overall overview")
+You can download Slither and use the following command to _audit_ the code
 
-## Bridge Token
+```sh
+slither .
+```
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-The token part is the interface used by external parties to interact with the token through all its lifecycle (issue/redeem, approvals, transfers, etc.). 
 
-The token has a single owner, one or multiple administrators, one or multple issuers and one or multiple seizers.
+<!-- ROADMAP -->
+## Roadmap
 
-As we want Bridge to be as open as possible, the token issuer will have the opportunity to define trusted intermediaries that will act as the compliance authorities for this specific token. The role of the compliance authority is to maintain the compliance registry and make sure that the information stored in the compliance registry are accurate.
+- TBD
 
-The token is registered with a Processor that will process all the operations centrally. Having a single Processor for all tokens will ease the maintenance of the token lifecycle, as it will not be necessary to upgrade all the tokens to be able to add new features or new restrictions to each token.
+See the [open issues](https://github.com/real-token/realt-walletless-contract/issues) for a full list of proposed features (and known issues).
 
-Every token issued with Bridge Token is compliant with the following standard proposals:
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-- [ERC20](https://eips.ethereum.org/EIPS/eip-20)
-- [ERC2612](https://eips.ethereum.org/EIPS/eip-2612)
-- [ERC3009](https://eips.ethereum.org/EIPS/eip-3009)
 
-[Bridge Token API Overview](docs/api.md#bridgetoken)
+<!-- COVERAGE -->
+## Coverage
 
-## Processor
+<img src="images/coverage.png" alt="Coverage">
 
-The Processor orchestrates all operations on tokens. For each transfer, the Processor will apply the rules configured on the token level and available through the Rule Engine and check if every rule allows the transfer.
+```
+npx hardhat coverage
+```
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-[Processor API Overview](docs/api.md#processor)
+<!-- GAS FEES -->
+## Gas fees
 
-## Rule Engine
+<img src="images/gas.png" alt="gas functions">
+<img src="images/deployment.png" alt="gas deployment">
 
-The Rule Engine is a library of rules that can be used by the token issuer to control how a token can be transfered or not. As regulations evolve, new rules can be added to the Rule Engine and the token issuer will be able to enforce them to adapt its compliance.
+```
+npx hardhat test
+```
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-Trivial rules like maximum transfers or minimum transfers will not need to have interactions with other contracts. For more complex rules that need information about the identity linked to an address or the history of transfers linked to an address, two contract are currently provided: Compliance Registry and Price Oracle.
+<!-- CONTRIBUTING -->
+## Contributing
 
-[Detailed Rule Engine Documentation](docs/RuleEngine.md)
-[Rule Engine API Overview](docs/api.md#ruleengine)
 
-## Compliance Registry
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
 
-The Compliance Registry is responsible of the storage of all identity information linked to an address or the storage of the history of transfers linked to an address. The compliance registry is managed by trusted intermediaries. Each trusted intermediary has its own space within the registry to update its own address related information. Based on the token trusted intermediaries, the Compliance Registry will return the compliance information that have been updated by one of the token trusted intermediary.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-> The Compliance Registry is designed to store only pseudo-anonymised data (no Customer Identification Data).
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-To be able to maintain a single reference currency for transfers history, the Compliance Registry will use the Price Oracle.
 
-[Detailed Compliance Registry Documentation](docs/ComplianceRegistry.md)
-[Compliance Registry API Overview](docs/api.md#complianceregistry)
 
-## Price Oracle
+<!-- LICENSE -->
+## License
 
-The Price Oracle is responsible of providing exchange rates between the reference currency and the token price.
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-[Price Oracle API Overview](docs/api.md#priceoracle)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-## Contract Diagram
 
-![Architecture](docs/assets/architecture.png "Architecture")
 
-## API
+<!-- CONTACT -->
+## Contact
 
-- [API](docs/api.md)
+Support - [@RealTPlatform](https://twitter.com/RealTPlatform) - support@realt.co
+
+Project Link: [https://github.com/real-token/realt-walletless-contract](https://github.com/real-token/realt-walletless-contract)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+<!-- BUILD WITH HARDHAT -->
+
+## Built With Hardhat
+
+* [Eslint](https://eslint.org/)
+* [Chai](https://www.chaijs.com/guide/)
+* [Solhint](https://github.com/protofire/solhint)
+* [Prettier](https://github.com/prettier/prettier)
+* [solidity-coverage](https://github.com/sc-forks/solidity-coverage)
+* [dotenv](https://www.npmjs.com/package/dotenv)
+* [Waffle](https://getwaffle.io/)
+* [Typescript](https://www.typescriptlang.org/)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/real-token/realt-walletless-contract.svg?style=for-the-badge
+[contributors-url]: https://github.com/real-token/realt-walletless-contract/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/real-token/realt-walletless-contract.svg?style=for-the-badge
+[forks-url]: https://github.com/real-token/realt-walletless-contract/network/members
+[stars-shield]: https://img.shields.io/github/stars/real-token/realt-walletless-contract.svg?style=for-the-badge
+[stars-url]: https://github.com/real-token/realt-walletless-contract/stargazers
+[issues-shield]: https://img.shields.io/github/issues/real-token/realt-walletless-contract.svg?style=for-the-badge
+[issues-url]: https://github.com/real-token/realt-walletless-contract/issues
+[license-shield]: https://img.shields.io/github/license/real-token/realt-walletless-contract.svg?style=for-the-badge
+[license-url]: https://github.com/real-token/realt-walletless-contract/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/company/realtplatform/
+[product-screenshot]: images/screenshot.png
+[use-template]: images/delete_me.png
+[use-url]: https://github.com/real-token/realt-walletless-contract/generate
