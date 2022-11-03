@@ -32,12 +32,15 @@ async function main() {
 
     const d = ethers.getContractFactory("Disperse");
 
+    const shm = ethers.getContractFactory("ShareholderMeeting");
+
     const factories = await Promise.all([
         cr, 
         po, 
         p, 
         re,
         d,
+        shm,
         uavr,
         ysr, 
         vr, 
@@ -73,7 +76,7 @@ async function main() {
     
     await Promise.all([init1, init2, init3, init4]);
     
-    const init5 = (contracts[3] as RuleEngine).setRules(contractsAddress.slice(5));
+    const init5 = (contracts[3] as RuleEngine).setRules(contractsAddress.slice(6));
     const init6 = (contracts[2] as Processor).setRuleEngine(contractsAddress[3]);
 
     await Promise.all([init5, init6])
@@ -84,6 +87,7 @@ async function main() {
     console.log('PROCESSOR: ' + contractsAddress[2]);
     console.log('RULE ENGINE: ' + contractsAddress[3]);
     console.log('DISPERSE: ' + contractsAddress[4]);
+    console.log('ShareHolder Meeting: ' + contractsAddress[5]);
 
 }
 

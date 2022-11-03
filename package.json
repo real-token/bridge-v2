@@ -10,7 +10,7 @@
     "hint": "solhint 'contracts/**/*.sol'",
     "compile": "npx hardhat compile",
     "node": "npx hardhat node",
-    "local": "npx hardhat run --network localhost scripts/deployLocal.ts",
+    "local": "npx hardhat run scripts/deployArchitecture.ts --network localhost",
     "test": "npx hardhat test",
     "coverage": "npx hardhat coverage",
     "deploy::mainnet": "npx hardhat run scripts/deployContract.ts --network mainnet",
