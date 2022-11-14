@@ -89,6 +89,8 @@ async function main() {
     console.log('DISPERSE: ' + contractsAddress[4]);
     console.log('ShareHolder Meeting: ' + contractsAddress[5]);
 
+    // await network.provider.send("evm_setAutomine", [false]);
+    // await network.provider.send("evm_setIntervalMining", [2000]);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
