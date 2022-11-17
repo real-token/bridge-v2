@@ -10,20 +10,20 @@ async function main() {
     await network.provider.send("evm_setAutomine", [false]);
     await network.provider.send("evm_setIntervalMining", [300]);
 
-    const uavr = ethers.getContractFactory("UserAttributeValidToRule");
-    const ysr = ethers.getContractFactory("YesNoRule");
-    const vr = ethers.getContractFactory("VestingRule");
-    const uvr = ethers.getContractFactory("UserValidRule");
-    const ufr = ethers.getContractFactory("UserFreezeRule");
-    const matr = ethers.getContractFactory("MaxTransferRule");
-    const mitr = ethers.getContractFactory("MinTransferRule");
-    const gfr = ethers.getContractFactory("GlobalFreezeRule");
-    const uktfr = ethers.getContractFactory("UserKycThresholdFromRule");
-    const uktbr = ethers.getContractFactory("UserKycThresholdBothRule");
-    const ukttr = ethers.getContractFactory("UserKycThresholdToRule");
-    const atlr = ethers.getContractFactory("AddressThresholdLockRule");
-    const stlr = ethers.getContractFactory("SoftTransferLimitRule");
-    const htlr = ethers.getContractFactory("HardTransferLimitRule");
+    const gfr = ethers.getContractFactory("GlobalFreezeRule"); // 0
+    const ufr = ethers.getContractFactory("UserFreezeRule"); // 1
+    const uktfr = ethers.getContractFactory("UserKycThresholdFromRule"); // 2
+    const ukttr = ethers.getContractFactory("UserKycThresholdToRule"); // 3
+    const uvr = ethers.getContractFactory("UserValidRule"); // 4
+    const htlr = ethers.getContractFactory("HardTransferLimitRule"); // 5
+    const stlr = ethers.getContractFactory("SoftTransferLimitRule"); // 6
+    const matr = ethers.getContractFactory("MaxTransferRule"); // 7
+    const mitr = ethers.getContractFactory("MinTransferRule"); // 8
+    const uktbr = ethers.getContractFactory("UserKycThresholdBothRule"); // 9
+    const atlr = ethers.getContractFactory("AddressThresholdLockRule"); // 10
+    const uavr = ethers.getContractFactory("UserAttributeValidToRule"); // 11
+    const vr = ethers.getContractFactory("VestingRule"); // 12
+    const ysr = ethers.getContractFactory("YesNoRule"); // ?
 
     const cr = ethers.getContractFactory("ComplianceRegistry");
     const po = ethers.getContractFactory("PriceOracle");
@@ -41,20 +41,20 @@ async function main() {
         re,
         d,
         shm,
-        uavr,
-        ysr, 
-        vr, 
-        uvr, 
+        gfr, 
         ufr, 
+        uktfr, 
+        ukttr, 
+        uvr, 
+        htlr,
+        stlr, 
         matr, 
         mitr, 
-        gfr, 
-        uktfr, 
         uktbr, 
-        ukttr, 
         atlr, 
-        stlr, 
-        htlr
+        uavr,
+        vr, 
+        ysr, 
         ]);
 
     let contracts = await Promise.all(
