@@ -98,6 +98,15 @@ const config: HardhatUserConfig = {
         },
       },
       {
+        version: "0.5.3",
+        settings: {
+          optimizer: {
+            enabled: false,
+            runs: 200,
+          },
+        },
+      },
+      {
         version: "0.4.25",
         settings: {
           optimizer: {
@@ -125,6 +134,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       mainnet: process.env.MAIN_ETHERSCAN_API_KEY ?? "",
+      goerli: process.env.MAIN_ETHERSCAN_API_KEY ?? "",
       gnosis: process.env.GNOSIS_ETHERSCAN_API_KEY ?? "",
     },
     customChains: [
