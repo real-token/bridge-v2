@@ -1,5 +1,6 @@
 import { ethers, network } from "hardhat";
-import { AddressThresholdLockRule, ComplianceRegistry, ComplianceRegistry__factory, GlobalFreezeRule, HardTransferLimitRule, MaxTransferRule, PriceOracle, Processor, RuleEngine, SoftTransferLimitRule, UserAttributeValidToRule, UserFreezeRule, UserKycThresholdBothRule, UserKycThresholdFromRule, UserKycThresholdToRule, UserValidRule, VestingRule } from "../typechain";
+import { ComplianceRegistry, GlobalFreezeRule, HardTransferLimitRule, PriceOracle, Processor, RuleEngine, SoftTransferLimitRule, UserAttributeValidToRule, UserFreezeRule, UserKycThresholdBothRule, UserKycThresholdFromRule, UserKycThresholdToRule, UserValidRule, VestingRule } from "../typechain";
+import { deploySafe } from "../utils"
 
 async function main() {
     const signers = await ethers.getSigners();
@@ -57,7 +58,7 @@ async function main() {
         vr, 
         ]);
 
-    const proxy = await aup
+    const adminProxy = await aup
 
     let contracts = await Promise.all(
       factories.map((factory, index) => factory.deploy({ nonce: currentNonce + index }))
@@ -92,7 +93,7 @@ async function main() {
     
     currentNonce = await admin.getTransactionCount();
 
-    let proxies = await Promise.all(contracts.map((contract, index) => proxy.deploy(contract.address, signers[0].address, data[index], { nonce: index + currentNonce })))
+    let proxies = await Promise.all(contracts.map((contract, index) => adminProxy.deploy(contract.address, signers[0].address, data[index], { nonce: index + currentNonce })))
     proxies = await Promise.all(proxies.map((p) => p.deployed()));
     const proxiesAddress = proxies.map((p) => p.address);
     await network.provider.send("evm_setAutomine", [true]);
@@ -107,6 +108,7 @@ async function main() {
 
     await Promise.all([after1, after2])
     
+    const { singleton, proxy } = await deploySafe(ethers, [signers[0].address], 1);
     console.log("DEPLOYER: " + signers[0].address)
     console.log("OWNER: " + signers[1].address)
     console.log('COMPLIANCE REGISTRY: ' + proxiesAddress[0]);
@@ -115,6 +117,8 @@ async function main() {
     console.log('RULE ENGINE: ' + proxiesAddress[3]);
     console.log('DISPERSE: ' + proxiesAddress[4]);
     console.log('ShareHolder Meeting: ' + proxiesAddress[5]);
+    console.log('GNOSIS SAFE: ' + proxy.address);
+    console.log('GNOSIS SINGLETON: ', singleton.address);
 
     // await network.provider.send("evm_setAutomine", [false]);
     // await network.provider.send("evm_setIntervalMining", [2000]);
