@@ -108,7 +108,7 @@ async function main() {
 
     await Promise.all([after1, after2])
     
-    const { singleton, proxy } = await deploySafe(ethers, [signers[0].address], 1);
+    const { singleton, proxy } = await deploySafe(ethers, [signers[1].address], 1);
     console.log("DEPLOYER: " + signers[0].address)
     console.log("OWNER: " + signers[1].address)
     console.log('COMPLIANCE REGISTRY: ' + proxiesAddress[0]);
@@ -121,7 +121,7 @@ async function main() {
     console.log('GNOSIS SINGLETON: ', singleton.address);
 
     // await network.provider.send("evm_setAutomine", [false]);
-    // await network.provider.send("evm_setIntervalMining", [2000]);
+    // await network.provider.send("evm_setIntervalMining", [100]);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
