@@ -59,5 +59,6 @@ export const deploySafe = async (ethers: HardhatEthersHelpers, owners: string[],
   const singleton = gnosisSafe_.attach(singletonAddress) as GnosisSafe;
   const proxy = gnosisSafe_.attach(proxyAddress) as GnosisSafeProxy;
 
+  console.log("GNOSIS FACTORY PROXY:", gnosisSafeProxyFactory.address);
   return { singleton, proxy };
 };

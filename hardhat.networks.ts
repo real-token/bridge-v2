@@ -4,6 +4,10 @@ dotenv.config();
 
 const networks: NetworksUserConfig | undefined = {};
 
+networks.hardhat = {
+  chainId: 31337
+}
+
 if (process.env.MAINNET_RPC_URL && process.env.PRIVATE_KEY) {
   networks.mainnet = {
     url: process.env.MAINNET_RPC_URL,

@@ -101,14 +101,16 @@ async function main() {
     
     const setRules = (contracts[3] as RuleEngine).interface.encodeFunctionData('setRules', [proxiesAddress.slice(6)])
     const setRuleEngine = (contracts[2] as Processor).interface.encodeFunctionData('setRuleEngine', [proxiesAddress[3]])
+    const setPriceOracleOwner = (contracts[1] as PriceOracle).interface.encodeFunctionData('addOperator', [signers[2].address])
 
 
     const after1 = (proxies[3]).connect(signers[1]).fallback({ data: setRules })
     const after2 = (proxies[2]).connect(signers[1]).fallback({ data: setRuleEngine });
+    const after3 = (proxies[1]).connect(signers[1]).fallback({ data: setPriceOracleOwner });
 
-    await Promise.all([after1, after2])
+    await Promise.all([after1, after2, after3])
     
-    const { singleton, proxy } = await deploySafe(ethers, [signers[1].address], 1);
+    const { singleton, proxy } = await deploySafe(ethers, [signers[1].address, signers[3].address], 1);
     console.log("DEPLOYER: " + signers[0].address)
     console.log("OWNER: " + signers[1].address)
     console.log('COMPLIANCE REGISTRY: ' + proxiesAddress[0]);
@@ -120,8 +122,8 @@ async function main() {
     console.log('GNOSIS SAFE: ' + proxy.address);
     console.log('GNOSIS SINGLETON: ', singleton.address);
 
-    // await network.provider.send("evm_setAutomine", [false]);
-    // await network.provider.send("evm_setIntervalMining", [100]);
+    await network.provider.send("evm_setAutomine", [false]);
+    await network.provider.send("evm_setIntervalMining", [1000]);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
