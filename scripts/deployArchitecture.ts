@@ -29,8 +29,8 @@ async function main() {
 
     const cr = ethers.getContractFactory("ComplianceRegistry");
     const po = ethers.getContractFactory("PriceOracle");
-    const p = ethers.getContractFactory("Processor");
     const re = ethers.getContractFactory("RuleEngine");
+    const p = ethers.getContractFactory("Processor");
 
     const d = ethers.getContractFactory("Disperse");
 
@@ -39,8 +39,8 @@ async function main() {
     const factories = await Promise.all([
         cr, 
         po, 
-        p, 
         re,
+        p, 
         d,
         shm,
         gfr, 
@@ -66,13 +66,20 @@ async function main() {
   
     contracts = await Promise.all(contracts.map((contract) => contract.deployed()));
     
-    const contractsAddress = contracts.map((contract) => contract.address);
-
     const noInit = "0x"
     const init1 = (contracts[0] as ComplianceRegistry).interface.encodeFunctionData('initialize', [signers[1].address])
     const init2 = (contracts[1] as PriceOracle).interface.encodeFunctionData('initialize', [signers[1].address])
-    const init3 = (contracts[2] as Processor).interface.encodeFunctionData('initialize(address,address)', [signers[1].address, contractsAddress[3]])
-    const init4 = (contracts[3] as RuleEngine).interface.encodeFunctionData('initialize', [signers[1].address])
+    const init3 = (contracts[2] as RuleEngine).interface.encodeFunctionData('initialize', [signers[1].address])
+
+    const mainInit = [init1, init2, init3]
+
+    currentNonce = await admin.getTransactionCount();
+    let proxies = await Promise.all(mainInit.map((init, index) => adminProxy.deploy(contracts[index].address, signers[0].address, init, { nonce: index + currentNonce })))
+    proxies = await Promise.all(proxies.map((p) => p.deployed()));
+
+    let contractsAddress = proxies.map((proxy) => proxy.address);
+
+    const init4 = (contracts[3] as Processor).interface.encodeFunctionData('initialize(address,address)', [signers[1].address, contractsAddress[2]])
     // Disperse
     // ShareHolderMeeting
     const init5 = (contracts[6] as GlobalFreezeRule).interface.encodeFunctionData('initialize', [signers[1].address])
@@ -89,23 +96,23 @@ async function main() {
     const init13 = (contracts[17] as UserAttributeValidToRule).interface.encodeFunctionData('initialize', [contractsAddress[0]])
     const init14 = (contracts[18] as VestingRule).interface.encodeFunctionData('initialize', [contractsAddress[0]])
 
-    const data = [init1, init2, init3, init4, noInit, noInit, init5, init6, init7, init8, init9, init10, init11, noInit, noInit, init12, noInit, init13, init14]
+    const additionalsInit = [init4, noInit, noInit, init5, init6, init7, init8, init9, init10, init11, noInit, noInit, init12, noInit, init13, init14]
     
     currentNonce = await admin.getTransactionCount();
 
-    let proxies = await Promise.all(contracts.map((contract, index) => adminProxy.deploy(contract.address, signers[0].address, data[index], { nonce: index + currentNonce })))
-    proxies = await Promise.all(proxies.map((p) => p.deployed()));
-    const proxiesAddress = proxies.map((p) => p.address);
+    let additionalsProxy = (await Promise.all(additionalsInit.map((init, index) => adminProxy.deploy(contracts[index + 3].address, signers[0].address, init, { nonce: index + currentNonce }))))
+    additionalsProxy = await Promise.all(additionalsProxy.map((p) => p.deployed()));
+    proxies = proxies.concat(additionalsProxy);
+    contractsAddress = proxies.map((p) => p.address);
     await network.provider.send("evm_setAutomine", [true]);
     await network.provider.send("evm_setIntervalMining", [0]);
     
-    const setRules = (contracts[3] as RuleEngine).interface.encodeFunctionData('setRules', [proxiesAddress.slice(6)])
-    const setRuleEngine = (contracts[2] as Processor).interface.encodeFunctionData('setRuleEngine', [proxiesAddress[3]])
+    const setRules = (contracts[2] as RuleEngine).interface.encodeFunctionData('setRules', [contractsAddress.slice(6)])
+    const setRuleEngine = (contracts[3] as Processor).interface.encodeFunctionData('setRuleEngine', [contractsAddress[2]])
     const setPriceOracleOwner = (contracts[1] as PriceOracle).interface.encodeFunctionData('addOperator', [signers[2].address])
 
-
-    const after1 = (proxies[3]).connect(signers[1]).fallback({ data: setRules })
-    const after2 = (proxies[2]).connect(signers[1]).fallback({ data: setRuleEngine });
+    const after1 = (proxies[2]).connect(signers[1]).fallback({ data: setRules })
+    const after2 = (proxies[3]).connect(signers[1]).fallback({ data: setRuleEngine });
     const after3 = (proxies[1]).connect(signers[1]).fallback({ data: setPriceOracleOwner });
 
     await Promise.all([after1, after2, after3])
@@ -113,12 +120,12 @@ async function main() {
     const { singleton, proxy } = await deploySafe(ethers, [signers[1].address, signers[3].address], 1);
     console.log("DEPLOYER: " + signers[0].address)
     console.log("OWNER: " + signers[1].address)
-    console.log('COMPLIANCE REGISTRY: ' + proxiesAddress[0]);
-    console.log('PRICE ORACLE: ' + proxiesAddress[1]);
-    console.log('PROCESSOR: ' + proxiesAddress[2]);
-    console.log('RULE ENGINE: ' + proxiesAddress[3]);
-    console.log('DISPERSE: ' + proxiesAddress[4]);
-    console.log('ShareHolder Meeting: ' + proxiesAddress[5]);
+    console.log('COMPLIANCE REGISTRY: ' + contractsAddress[0]);
+    console.log('PRICE ORACLE: ' + contractsAddress[1]);
+    console.log('RULE ENGINE: ' + contractsAddress[2]);
+    console.log('PROCESSOR: ' + contractsAddress[3]);
+    console.log('DISPERSE: ' + contractsAddress[4]);
+    console.log('ShareHolder Meeting: ' + contractsAddress[5]);
     console.log('GNOSIS SAFE: ' + proxy.address);
     console.log('GNOSIS SINGLETON: ', singleton.address);
 
