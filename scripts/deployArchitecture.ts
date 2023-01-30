@@ -130,7 +130,7 @@ async function main() {
     console.log('GNOSIS SINGLETON: ', singleton.address);
 
     await network.provider.send("evm_setAutomine", [false]);
-    await network.provider.send("evm_setIntervalMining", [1000]);
+    await network.provider.send("evm_setIntervalMining", [2000]);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
