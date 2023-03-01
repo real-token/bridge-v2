@@ -5,8 +5,18 @@ dotenv.config();
 const networks: NetworksUserConfig | undefined = {};
 
 networks.hardhat = {
-  chainId: 31337
+  chainId: process.env.HARDHAT_CHAIN_ID ? +process.env.HARDHAT_CHAIN_ID : 31337,
 }
+
+networks.home = {
+  chainId: 31337,
+  url: "http://127.0.0.1:8545/",
+};
+
+networks.foreign = {
+  chainId: 1337,
+  url: "http://127.0.0.1:8546/",
+};
 
 if (process.env.MAINNET_RPC_URL && process.env.PRIVATE_KEY) {
   networks.mainnet = {
