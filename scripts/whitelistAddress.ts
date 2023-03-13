@@ -1,6 +1,7 @@
-import { ethers, network } from "hardhat";
-import { ComplianceRegistry, GlobalFreezeRule, GnosisSafe, GnosisSafeProxyFactory__factory, GnosisSafe__factory, HardTransferLimitRule, PriceOracle, Processor, RuleEngine, SoftTransferLimitRule, UserAttributeValidToRule, UserFreezeRule, UserKycThresholdBothRule, UserKycThresholdFromRule, UserKycThresholdToRule, UserValidRule, VestingRule } from "../typechain";
-import { AddressZero, deploySafe } from "../utils"
+import { isAddress } from "ethers/lib/utils";
+import { ethers } from "hardhat";
+import { GnosisSafe__factory } from "../typechain";
+import { AddressZero } from "../utils"
 
 const EMPTY_DATA = '0x'
 
@@ -15,16 +16,20 @@ const getPreValidatedSignatures = (
 
   
 async function main() {
+  const compliance = process.env.COMPLIANCE
+  const trusted = process.env.TRUSTED
+  if (!compliance || !isAddress(compliance)) throw new Error("Run command with COMPLIANCE=0x env variable");
+  if (!trusted || !isAddress(trusted)) throw new Error("Run command with TRUSTED=0x env variable");
+
+
     const signers = await ethers.getSigners();
 
     const safeOwner = signers[1]
-    const safe = "0xDDf926977cBCe983D2aeBA73a7E257fBa4aAA05e";
-    const crAddress = "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c";
 
-    const complianceRegistry = await ethers.getContractAt("ComplianceRegistry", crAddress, safeOwner)
-    const safeProxy = await ethers.getContractAt("GnosisSafeProxy", safe, safeOwner)
+    const complianceRegistry = await ethers.getContractAt("ComplianceRegistry", compliance, safeOwner)
+    const safeProxy = await ethers.getContractAt("GnosisSafeProxy", trusted, safeOwner)
 
-    const register = (complianceRegistry.interface).encodeFunctionData('registerUsers', [[], [], []])
+    const register = (complianceRegistry.interface).encodeFunctionData('registerUsers', [[safeOwner.address], ["130"], ["1"]])
     const exectx = (GnosisSafe__factory.createInterface()).encodeFunctionData('execTransaction', [complianceRegistry.address, '0', register, '0', 0, 0, 0, AddressZero, AddressZero, getPreValidatedSignatures(safeOwner.address)])
 
     await safeProxy.fallback({ data: exectx })

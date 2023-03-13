@@ -1,6 +1,5 @@
 import { isAddress } from "ethers/lib/utils";
-import { ethers, network } from "hardhat";
-import { CoinBridgeToken } from "../typechain";
+import { ethers } from "hardhat";
 import { ONE_ETHER } from "../utils";
 
 async function main() {

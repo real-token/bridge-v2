@@ -13,6 +13,7 @@
     "local": "npx hardhat run scripts/deployArchitecture.ts --network localhost",
     "test": "npx hardhat test",
     "coverage": "npx hardhat coverage",
+    "bridge": "sh ./scripts/startBridge.sh",
     "deploy::mainnet": "npx hardhat run scripts/deployContract.ts --network mainnet",
     "deploy::kovan": "npx hardhat run scripts/deployContract.ts --network kovan",
     "deploy::ropsten": "npx hardhat run scripts/deployContract.ts --network ropsten",
