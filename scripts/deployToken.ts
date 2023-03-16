@@ -26,7 +26,7 @@ async function main() {
     await proxy.deployed();
 
     const addSupplier = cbt.interface.encodeFunctionData('addSupplier', [tokenOwner.address]);
-    const mint = cbt.interface.encodeFunctionData('mint', [guest.address, ONE_ETHER.mul("10000001337")]);
+    const mint = cbt.interface.encodeFunctionData('mint', [tokenOwner.address, ONE_ETHER.mul("10000")]);
 
     const tx1 = await (proxy).connect(tokenOwner).fallback({ data: addSupplier })
     const tx2 = await (proxy).connect(tokenOwner).fallback({ data: mint })
