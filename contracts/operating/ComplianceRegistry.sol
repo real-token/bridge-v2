@@ -63,7 +63,7 @@ import "../access/Operator.sol";
 contract ComplianceRegistry is Initializable, IComplianceRegistry, Operator {
   using SafeMath for uint256;
 
-  uint256 public constant VERSION = 2;
+  uint256 public constant VERSION = 3;
 
   uint256 constant internal MONTH = 31 days;
   uint8 constant internal TRANSFER_ONHOLD = 0;
@@ -691,13 +691,13 @@ contract ComplianceRegistry is Initializable, IComplianceRegistry, Operator {
   function _registerUser(address _address, uint256[] memory _attributeKeys, uint256[] memory _attributeValues)
     internal
   {
-    uint256 _userCount = userCount[_msgSender()];
-    _updateUserAttributes(++_userCount, _attributeKeys, _attributeValues);
+    uint256 _userCount = userCount[_msgSender()] + 1;
     addressUsers[_msgSender()][_address] = _userCount;
     userAddresses[_msgSender()][_userCount].push(_address);
+    userCount[_msgSender()] = _userCount;
 
     emit AddressAttached(_msgSender(), _userCount, _address);
-    userCount[_msgSender()] = _userCount;
+    _updateUserAttributes(_userCount, _attributeKeys, _attributeValues);
   }
 
   /**

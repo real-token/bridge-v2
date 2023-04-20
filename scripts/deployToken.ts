@@ -32,7 +32,7 @@ async function main() {
     const tx2 = await (proxy).connect(tokenOwner).fallback({ data: mint })
 
 
-    console.log(proxy.address);
+    console.log('Token created @', proxy.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
