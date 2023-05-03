@@ -24,7 +24,7 @@ async function main() {
 
     const signers = await ethers.getSigners();
 
-    const safeOwner = signers[1]
+    const safeOwner = signers[2]
 
     const complianceRegistry = await ethers.getContractAt("ComplianceRegistry", compliance, safeOwner)
     const safeProxy = await ethers.getContractAt("GnosisSafeProxy", trusted, safeOwner)

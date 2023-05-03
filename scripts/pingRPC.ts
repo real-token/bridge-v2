@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 
 async function main() {
-    const [one, two, three, four, five, six, seven] = await ethers.getSigners();
+    const [, one, two, three, four, five, six, seven] = await ethers.getSigners();
 
     const prom1 = one.getBalance()
     // const prom2 = two.getBalance()

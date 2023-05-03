@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { ONE_ETHER } from "../utils";
 
 async function main() {
-    const [proxyAdmin, tokenOwner, guest] = await ethers.getSigners();
+    const [, proxyAdmin, tokenOwner, guest] = await ethers.getSigners();
 
     const processor = process.env.PROCESSOR
     const trusted = process.env.TRUSTED
@@ -17,12 +17,12 @@ async function main() {
     const cbt = await ethers.getContractFactory("CoinBridgeToken"); 
     const aup = await ethers.getContractFactory("AdminUpgradeabilityProxy");
 
-    const impl = await cbt.deploy();
+    const impl = await cbt.connect(proxyAdmin).deploy();
     await impl.deployed();
 
     const init = cbt.interface.encodeFunctionData('initialize(address,address,string,string,uint8,address[])', [tokenOwner.address, processor, name, symbol, "18", [trusted]])
 
-    const proxy = await aup.deploy(impl.address, proxyAdmin.address, init)
+    const proxy = await aup.connect(proxyAdmin).deploy(impl.address, proxyAdmin.address, init)
     await proxy.deployed();
 
     const addSupplier = cbt.interface.encodeFunctionData('addSupplier', [tokenOwner.address]);

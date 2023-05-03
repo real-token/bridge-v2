@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { ONE_ETHER } from "../utils";
 
 async function main() {
-    const [mainSigner] = await ethers.getSigners();
+    const [, mainSigner] = await ethers.getSigners();
 
     await setBalance(mainSigner.address, ONE_ETHER.mul("100000000"))
     

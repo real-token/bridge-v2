@@ -15,7 +15,7 @@ networks.home = {
 
 networks.foreign = {
   chainId: 1337,
-  url: "http://127.0.0.1:8546/",
+  url: "http://127.0.0.1:7545/",
 };
 
 if (process.env.MAINNET_RPC_URL && process.env.PRIVATE_KEY) {

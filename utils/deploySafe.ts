@@ -11,12 +11,14 @@ export const deploySafe = async (ethers: HardhatEthersHelpers, owners: string[],
     "GnosisSafeProxyFactory"
   );
 
+  const signers = await ethers.getSigners();
+  const deployer = signers[1];
   const gnosisSafe_ = await ethers.getContractFactory("GnosisSafe");
 
   const gnosisSafeProxyFactory =
-    (await gnosisSafeProxyFactory_.deploy()) as GnosisSafeProxyFactory;
+    (await gnosisSafeProxyFactory_.connect(deployer).deploy()) as GnosisSafeProxyFactory;
 
-  const gnosisSafe = (await gnosisSafe_.deploy()) as GnosisSafe;
+  const gnosisSafe = (await gnosisSafe_.connect(deployer).deploy()) as GnosisSafe;
 
   await gnosisSafe.deployed();
 
@@ -45,7 +47,7 @@ export const deploySafe = async (ethers: HardhatEthersHelpers, owners: string[],
   );
 
   const saltNonce = BigZero;
-  const txResponse = await ProxyFactoryContract.createProxyWithNonce(
+  const txResponse = await ProxyFactoryContract.connect(deployer).createProxyWithNonce(
     safeContract.address,
     safeAbi,
     saltNonce

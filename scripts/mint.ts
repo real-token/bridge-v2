@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { ONE_ETHER } from "../utils";
 
 async function main() {
-    const [proxyAdmin, tokenOwner, guest] = await ethers.getSigners();
+    const [, proxyAdmin, tokenOwner, guest] = await ethers.getSigners();
 
     const destination = process.env.DEST
     const amount = process.env.AMOUNT ?? "10000"

@@ -5,7 +5,7 @@ import { deploySafe } from "../utils"
 async function main() {
     const signers = await ethers.getSigners();
 
-    const admin = signers[0]
+    const admin = signers[1]
     let currentNonce = await admin.getTransactionCount();
 
     await network.provider.send("evm_setAutomine", [false]);
@@ -61,34 +61,34 @@ async function main() {
     const adminProxy = await aup
 
     let contracts = await Promise.all(
-      factories.map((factory, index) => factory.deploy({ nonce: currentNonce + index }))
+      factories.map((factory, index) => factory.connect(admin).deploy({ nonce: currentNonce + index }))
     );
   
     contracts = await Promise.all(contracts.map((contract) => contract.deployed()));
     
     const noInit = "0x"
-    const init1 = (contracts[0] as ComplianceRegistry).interface.encodeFunctionData('initialize', [signers[1].address])
-    const init2 = (contracts[1] as PriceOracle).interface.encodeFunctionData('initialize', [signers[1].address])
-    const init3 = (contracts[2] as RuleEngine).interface.encodeFunctionData('initialize', [signers[1].address])
-
+    const init1 = (contracts[0] as ComplianceRegistry).interface.encodeFunctionData('initialize', [signers[2].address])
+    const init2 = (contracts[1] as PriceOracle).interface.encodeFunctionData('initialize', [signers[2].address])
+    const init3 = (contracts[2] as RuleEngine).interface.encodeFunctionData('initialize', [signers[2].address])
+ 
     const mainInit = [init1, init2, init3]
 
     currentNonce = await admin.getTransactionCount();
-    let proxies = await Promise.all(mainInit.map((init, index) => adminProxy.deploy(contracts[index].address, signers[0].address, init, { nonce: index + currentNonce })))
+    let proxies = await Promise.all(mainInit.map((init, index) => adminProxy.connect(admin).deploy(contracts[index].address, admin.address, init, { nonce: index + currentNonce })))
     proxies = await Promise.all(proxies.map((p) => p.deployed()));
 
     let contractsAddress = proxies.map((proxy) => proxy.address);
 
-    const init4 = (contracts[3] as Processor).interface.encodeFunctionData('initialize(address,address)', [signers[1].address, contractsAddress[2]])
+    const init4 = (contracts[3] as Processor).interface.encodeFunctionData('initialize(address,address)', [signers[2].address, contractsAddress[2]])
     // Disperse
     // ShareHolderMeeting
-    const init5 = (contracts[6] as GlobalFreezeRule).interface.encodeFunctionData('initialize', [signers[1].address])
+    const init5 = (contracts[6] as GlobalFreezeRule).interface.encodeFunctionData('initialize', [signers[2].address])
     const init6 = (contracts[7] as UserFreezeRule).interface.encodeFunctionData('initialize', [contractsAddress[0]])
     const init7 = (contracts[8] as UserKycThresholdFromRule).interface.encodeFunctionData('initialize', [contractsAddress[0]])
     const init8 = (contracts[9] as UserKycThresholdToRule).interface.encodeFunctionData('initialize', [contractsAddress[0]])
     const init9 = (contracts[10] as UserValidRule).interface.encodeFunctionData('initialize', [contractsAddress[0]])
-    const init10 = (contracts[11] as HardTransferLimitRule).interface.encodeFunctionData('initialize(address,address)', [signers[1].address, contractsAddress[0]])
-    const init11 = (contracts[12] as SoftTransferLimitRule).interface.encodeFunctionData('initialize(address,address)', [signers[1].address, contractsAddress[0]])
+    const init10 = (contracts[11] as HardTransferLimitRule).interface.encodeFunctionData('initialize(address,address)', [signers[2].address, contractsAddress[0]])
+    const init11 = (contracts[12] as SoftTransferLimitRule).interface.encodeFunctionData('initialize(address,address)', [signers[2].address, contractsAddress[0]])
     // MaxTransferRule
     // MinTransferRule
     const init12 = (contracts[15] as UserKycThresholdBothRule).interface.encodeFunctionData('initialize', [contractsAddress[0]])
@@ -100,7 +100,7 @@ async function main() {
     
     currentNonce = await admin.getTransactionCount();
 
-    let additionalsProxy = (await Promise.all(additionalsInit.map((init, index) => adminProxy.deploy(contracts[index + 3].address, signers[0].address, init, { nonce: index + currentNonce }))))
+    let additionalsProxy = (await Promise.all(additionalsInit.map((init, index) => adminProxy.connect(admin).deploy(contracts[index + 3].address, signers[1].address, init, { nonce: index + currentNonce }))))
     additionalsProxy = await Promise.all(additionalsProxy.map((p) => p.deployed()));
     proxies = proxies.concat(additionalsProxy);
     contractsAddress = proxies.map((p) => p.address);
@@ -109,17 +109,17 @@ async function main() {
     
     const setRules = (contracts[2] as RuleEngine).interface.encodeFunctionData('setRules', [contractsAddress.slice(6)])
     const setRuleEngine = (contracts[3] as Processor).interface.encodeFunctionData('setRuleEngine', [contractsAddress[2]])
-    const setPriceOracleOwner = (contracts[1] as PriceOracle).interface.encodeFunctionData('addOperator', [signers[2].address])
+    const setPriceOracleOwner = (contracts[1] as PriceOracle).interface.encodeFunctionData('addOperator', [signers[3].address])
 
-    const after1 = (proxies[2]).connect(signers[1]).fallback({ data: setRules })
-    const after2 = (proxies[3]).connect(signers[1]).fallback({ data: setRuleEngine });
-    const after3 = (proxies[1]).connect(signers[1]).fallback({ data: setPriceOracleOwner });
+    const after1 = (proxies[2]).connect(signers[2]).fallback({ data: setRules })
+    const after2 = (proxies[3]).connect(signers[2]).fallback({ data: setRuleEngine });
+    const after3 = (proxies[1]).connect(signers[2]).fallback({ data: setPriceOracleOwner });
 
     await Promise.all([after1, after2, after3])
     
-    const { singleton, proxy } = await deploySafe(ethers, [signers[1].address, signers[3].address], 1);
-    console.log("DEPLOYER: " + signers[0].address)
-    console.log("OWNER: " + signers[1].address)
+    const { singleton, proxy } = await deploySafe(ethers, [signers[2].address, signers[4].address], 1);
+    console.log("DEPLOYER: " + signers[1].address)
+    console.log("OWNER: " + signers[2].address)
     console.log('COMPLIANCE REGISTRY: ' + contractsAddress[0]);
     console.log('PRICE ORACLE: ' + contractsAddress[1]);
     console.log('RULE ENGINE: ' + contractsAddress[2]);
