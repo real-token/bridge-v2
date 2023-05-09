@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 yarn hardhat run scripts/deployArchitecture.ts --network home & pids=$!
 yarn hardhat run scripts/deployArchitecture.ts --network foreign & pids+=" $!"
 

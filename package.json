@@ -66,7 +66,7 @@
     "@typechain/hardhat": "^6.1.2",
     "@types/node": "^18.7.16",
     "ethereum-waffle": "^3.4.4",
-    "hardhat": "^2.11.1",
+    "hardhat": "^2.14.0",
     "ethers": "^5.7.0",
     "hardhat-gas-reporter": "^1.0.9",
     "solidity-coverage": "^0.8.1",
