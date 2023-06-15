@@ -80,6 +80,15 @@ if (process.env.MATIC_RPC_URL && process.env.PRIVATE_KEY) {
   };
 }
 
+if (process.env.SEPOLIA_RPC_URL && process.env.PRIVATE_KEY) {
+  networks.sepolia = {
+    url: process.env.SEPOLIA_RPC_URL,
+    chainId: 11155111,
+    gasPrice: "auto",
+    accounts: [process.env.PRIVATE_KEY],
+  }
+};
+
 if (process.env.MUMBAI_RPC_URL && process.env.PRIVATE_KEY) {
   networks.mumbai = {
     url: process.env.MUMBAI_RPC_URL,
