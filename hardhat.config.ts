@@ -144,6 +144,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: process.env.MAIN_ETHERSCAN_API_KEY ?? "",
       goerli: process.env.MAIN_ETHERSCAN_API_KEY ?? "",
+      sepolia: process.env.MAIN_ETHERSCAN_API_KEY ?? "",
       gnosis: process.env.GNOSIS_ETHERSCAN_API_KEY ?? "",
     },
     customChains: [
