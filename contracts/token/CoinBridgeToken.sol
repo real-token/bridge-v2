@@ -49,7 +49,19 @@ import "../interfaces/IProcessor.sol";
 
 
 contract CoinBridgeToken is Initializable, BridgeToken {
-  uint256 public constant VERSION = 2;
+  /**
+  * Purpose:
+  * This event is emitted when the board resolution url is changed
+  *
+  * @param boardResolutionDocumentHash - hash of board resolution document
+  */
+  event BoardResolutionDocumentSet(bytes32 boardResolutionDocumentHash);
+
+  uint256 public constant VERSION = 3;
+
+  string public boardResolutionDocumentUrl;
+  bytes32 public boardResolutionDocumentHash;
+  string public terms;
 
   function initialize(
     address owner,
@@ -69,6 +81,25 @@ contract CoinBridgeToken is Initializable, BridgeToken {
       decimals,
       trustedIntermediaries
     );
+  }
+
+  /**
+  * @dev Set the terms of the tokenization (usually a url)
+  * @param _terms the terms of the tokenization (usually a url)
+  */
+  function setTerms(string calldata _terms) external onlyAdministrator {
+    terms = _terms;
+  }
+
+  /**
+  * @dev Set the board resolution url and the board resolution document hash
+  * @param _boardResolutionDocumentUrl the url on which the board resolution document can be downloaded
+  * @param _boardResolutionDocumentHash the hash of the board resolution document for authenticity check
+  */
+  function setBoardResolutionDocument(string calldata _boardResolutionDocumentUrl, bytes32 _boardResolutionDocumentHash) external onlyAdministrator {
+    boardResolutionDocumentUrl = _boardResolutionDocumentUrl;
+    boardResolutionDocumentHash = _boardResolutionDocumentHash;
+    emit BoardResolutionDocumentSet(_boardResolutionDocumentHash);
   }
 
   /* Reserved slots for future use: https://docs.openzeppelin.com/sdk/2.5/writing-contracts.html#modifying-your-contracts */
